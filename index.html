@@ -66,6 +66,16 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
+
+        .credits-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            color: #9ca3af;
+            margin-top: 1.5rem;
+            font-family: 'Noto Sans TC', sans-serif;
+        }
     </style>
 </head>
 <body>
@@ -77,12 +87,11 @@
     <div class="progress-bar" id="progress"></div>
 
     <div class="fixed bottom-8 text-stone-500 text-sm tracking-widest uppercase font-sans">
-        Food Philosopher Theater • <span id="counter">START</span>
+        生活是一場饗宴，而我們是優雅的吃客 • <span id="counter">START</span>
     </div>
 
     <script>
         const rawCardsData = [
-            // 標題頁資料 (特殊標記)
             { isTitle: true, title: "吃貨哲學家", subtitle: "114年 來去踅基隆", icon: "🍱" },
             { name: "苦瓜", philosopher: "陳宥凱", quote: "吃苦，是為了看清世界的原味。", icon: "🥒" },
             { name: "牛肉麵", philosopher: "徐暐婷", quote: "以韌性撐起靈魂，用火候溫潤人生。", icon: "🍜" },
@@ -113,8 +122,17 @@
             { name: "紅燒牛肉麵", philosopher: "蔡定穎", quote: "終會成香。", icon: "🍜" },
             { name: "清燉牛肉麵", philosopher: "鄭少甯", quote: "清淡不炫，久熬方見真味深長。", icon: "🍜" },
             { name: "咖啡", philosopher: "吳冠緯", quote: "人生如咖啡，苦澀後才有最香的回甘。", icon: "☕" },
-            { name: "陽春麵", philosopher: "季定睿", quote: "慢慢走在平淡，溫緩便會發光。", icon: "🍜" }
+            { name: "陽春麵", philosopher: "季定睿", quote: "慢慢走在平淡，溫緩便會發光。", icon: "🍜" },
+            { name: "珍珠奶茶", philosopher: "林祐萱", quote: "活得粒粒分明，在群體之中仍站得住自己。", icon: "🧋" },
+            { name: "雞蛋糕", philosopher: "簡佩萱", quote: "總有些看似堅硬的人，心底藏著雞蛋糕般的柔軟溫熱。", icon: "🧁" },
+            { name: "辛辣香菇麵", philosopher: "羅丞妍", quote: "吞下生活那口灼熱的辛辣，日子每天都痛快。", icon: "🍜" },
+            { isEnd: true } // 謝幕頁標記
         ];
+
+        // 提取所有學生姓名
+        const studentNames = rawCardsData
+            .filter(d => d.philosopher)
+            .map(d => d.philosopher);
 
         let currentIndex = 0;
         const displayTime = 5000; 
@@ -125,53 +143,59 @@
             const progressBar = document.getElementById('progress');
             const data = rawCardsData[currentIndex];
 
-            // 重置進度條
             progressBar.style.transition = 'none';
             progressBar.style.width = '0%';
             
             if (data.isTitle) {
-                // 渲染開場標題頁
                 container.innerHTML = `
                     <div class="fade-in-out title-screen">
-                        <span class="food-icon">${data.icon}</span>
+                        <span class="food-icon">🍱</span>
                         <h1 class="text-6xl md:text-8xl font-bold mb-6">${data.title}</h1>
                         <div class="h-1 w-24 bg-amber-700 mx-auto mb-6"></div>
-                        <p class="text-2xl md:text-3xl text-stone-400 tracking-[0.5em] font-light">
-                            ${data.subtitle}
-                        </p>
+                        <p class="text-2xl md:text-3xl text-stone-400 tracking-[0.5em] font-light">${data.subtitle}</p>
                     </div>
                 `;
                 counter.textContent = "INTRO";
+            } else if (data.isEnd) {
+                container.innerHTML = `
+                    <div class="fade-in-out">
+                        <h2 class="text-3xl font-bold text-amber-600 mb-4">營業中</h2>
+                        <div class="text-lg text-stone-300 mb-6">
+                            <p class="mb-2">© 2026 [國立基隆商工 / 來去踅基隆] 版權所有</p>
+                           
+                            <p class="text-stone-500 mt-2">指導教師：陳美蘭、吳仲騏</p>
+                        </div>
+                        <div class="h-px w-full bg-stone-800 my-4"></div>
+                        <p class="text-sm tracking-widest text-amber-500 uppercase mb-4">吃貨哲學家 / 修課學生</p>
+                        <div class="credits-list">
+                            ${studentNames.map(name => `<span>${name}</span>`).join('')}
+                        </div>
+                    </div>
+                `;
+                counter.textContent = "END";
             } else {
-                // 渲染哲學家名言頁
                 container.innerHTML = `
                     <div class="fade-in-out">
                         <span class="food-icon">${data.icon}</span>
                         <h2 class="text-2xl text-amber-500 font-sans tracking-widest mb-4">— ${data.name} —</h2>
                         <div class="quote-mark">“</div>
-                        <p class="text-3xl md:text-4xl font-bold leading-relaxed mb-8 px-4">
-                            ${data.quote}
-                        </p>
+                        <p class="text-3xl md:text-4xl font-bold leading-relaxed mb-8 px-4">${data.quote}</p>
                         <div class="inline-block border-t border-stone-700 pt-4 px-8">
                             <span class="text-xl text-stone-400">吃貨哲學家｜${data.philosopher}</span>
                         </div>
                     </div>
                 `;
-                // 計算扣除標題頁後的編號
-                counter.textContent = `${currentIndex} / ${rawCardsData.length - 1}`;
+                counter.textContent = `${currentIndex} / ${rawCardsData.length - 2}`;
             }
 
-            // 開始進度條動畫
             setTimeout(() => {
                 progressBar.style.transition = `width ${displayTime}ms linear`;
                 progressBar.style.width = '100%';
             }, 50);
 
-            // 準備下一位
             currentIndex = (currentIndex + 1) % rawCardsData.length;
         }
 
-        // 初始化播放
         updateSlide();
         setInterval(updateSlide, displayTime);
     </script>
