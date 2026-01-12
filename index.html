@@ -1,362 +1,179 @@
 <!DOCTYPE html>
-<html lang="zh-Hant">
+<html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>吃貨哲學家 - 互動牌卡</title>
-    <!-- 載入 Tailwind CSS --><script src="https://cdn.tailwindcss.com"></script>
-    <!-- 設定字體為 Noto Sans TC --><style>
-        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;500;700&display=swap');
+    <title>吃貨哲學劇場 - 自動放映中</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700&family=Noto+Sans+TC:wght@300;400&display=swap');
+
         body {
-            font-family: 'Noto Sans TC', sans-serif;
-            background-color: #f7f7f0; /* 溫暖的米白色背景 */
-        }
-        /* 定義牌卡翻轉效果 */
-        .card-container {
-            perspective: 1000px;
-            height: 100%;
-            width: 100%;
-            cursor: pointer;
-        }
-        .card {
-            width: 100%;
-            height: 100%;
-            transition: transform 0.6s;
-            transform-style: preserve-3d;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            border-radius: 0.75rem;
-        }
-        .card.flipped {
-            transform: rotateY(180deg);
-        }
-        .card-face {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            backface-visibility: hidden;
-            border-radius: 0.75rem;
-            display: flex; /* 使用 flex 佈局 */
-            flex-direction: column; /* 垂直排列 */
-            align-items: center; /* 水平居中 */
-            justify-content: center; /* 垂直居中 */
-            text-align: center;
-            overflow: hidden; /* 確保內容不會溢出 */
-            box-sizing: border-box; /* 邊框和內邊距包含在寬高內 */
-        }
-        .card-front {
-            background-color: #fefce8; /* 淺黃色，代表食物的誘惑 */
-            color: #4b5563;
-            border: 2px solid #fcd34d;
-            padding: 0.5rem; /* 增加內邊距 */
-        }
-        .card-front img {
-            max-width: 90%; /* 圖片最大寬度 */
-            max-height: 80%; /* 圖片最大高度 */
-            object-fit: contain; /* 保持圖片比例並適應容器 */
-            border-radius: 0.5rem;
-            margin-bottom: 0.25rem; /* 圖片下方留一點空間給文字 */
-        }
-        .card-front .food-name {
-            font-size: 0.8rem; /* 小字體 */
-            font-weight: 500;
-            color: #6b7280;
-            line-height: 1.2;
-            padding: 0 0.2rem;
-        }
-
-        .card-back {
-            background-color: #b45309; /* 深橘色，代表哲學的沉澱 */
-            color: white;
-            transform: rotateY(180deg);
-            padding: 1rem; /* 增加內邊距 */
-            border: 3px solid #fef3c7;
-        }
-        .card-back .quote-text {
-            font-size: 0.85rem; /* 調整背面文字大小 */
-            line-height: 1.4;
-            display: -webkit-box;
-            -webkit-line-clamp: 6; /* 限制顯示行數 */
-            -webkit-box-orient: vertical;
+            font-family: 'Noto Serif TC', serif;
+            background-color: #1a1a1a; 
+            color: #e5e7eb;
             overflow: hidden;
-            text-overflow: ellipsis; /* 超出部分顯示省略號 */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
         }
 
-        /* 響應式網格調整 (行動版顯示為 6x6, 平板以上為 9x9) */
-        #card-grid {
-            grid-template-columns: repeat(6, minmax(0, 1fr));
-            gap: 0.5rem;
+        .slide-container {
+            width: 100%;
+            max-width: 900px;
+            text-align: center;
+            padding: 2rem;
         }
-        @media (min-width: 640px) {
-            #card-grid {
-                grid-template-columns: repeat(9, minmax(0, 1fr));
-            }
+
+        .fade-in-out {
+            animation: fadeInOut 5s infinite;
+        }
+
+        @keyframes fadeInOut {
+            0% { opacity: 0; transform: translateY(20px); }
+            15% { opacity: 1; transform: translateY(0); }
+            85% { opacity: 1; transform: translateY(0); }
+            100% { opacity: 0; transform: translateY(-20px); }
+        }
+
+        .food-icon {
+            font-size: 8rem;
+            margin-bottom: 2rem;
+            display: block;
+            filter: drop-shadow(0 0 20px rgba(255,255,255,0.2));
+        }
+
+        .progress-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            height: 4px;
+            background: #b45309;
+            transition: width 5s linear;
+        }
+
+        .quote-mark {
+            font-family: 'Georgia', serif;
+            color: #4b5563;
+            font-size: 4rem;
+            line-height: 1;
+        }
+
+        .title-screen h1 {
+            letter-spacing: 0.2em;
+            background: linear-gradient(to right, #fcd34d, #b45309);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
     </style>
 </head>
-<body class="p-4 sm:p-8">
+<body>
 
-    <div class="max-w-7xl mx-auto">
-        <!-- 標題與模式切換區 --><header class="text-center mb-8">
-            <h1 class="text-4xl font-bold text-amber-900 mb-2">🍽️ 吃貨哲學家 🧠</h1>
-            <p class="text-lg text-gray-600">— 選擇你的美食，啟發你的心靈 —</p>
-        </header>
+    <div class="slide-container" id="theater-content">
+        <!-- 內容將由 JS 自動輪播 -->
+    </div>
 
-        <!-- 互動控制區 --><div class="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-4 mb-8 p-4 bg-white rounded-xl shadow-lg">
-            <button id="random-draw-btn" class="w-full sm:w-auto px-6 py-3 bg-amber-600 text-white font-semibold rounded-lg shadow-md hover:bg-amber-700 transition duration-150">
-                ✨ 模式二：隨機抽卡 (決定吃什麼!)
-            </button>
-            <button id="reset-btn" class="w-full sm:w-auto px-6 py-3 bg-gray-200 text-gray-700 font-semibold rounded-lg hover:bg-gray-300 transition duration-150">
-                🔄 重置所有牌卡
-            </button>
-        </div>
+    <div class="progress-bar" id="progress"></div>
 
-        <!-- 隨機抽卡結果顯示區 (自定義彈窗/訊息框取代 alert) --><div id="result-message" class="hidden fixed inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center p-4">
-            <div class="bg-white rounded-xl p-6 sm:p-10 max-w-lg w-full shadow-2xl transform transition-all duration-300">
-                <h2 id="result-title" class="text-3xl font-bold text-amber-800 mb-4 border-b pb-2">隨機抽卡結果</h2>
-                <div id="result-content" class="space-y-4 text-center">
-                    <!-- 隨機結果會插入此處 --></div>
-                <button onclick="closeModal()" class="mt-6 w-full py-2 bg-amber-600 text-white font-semibold rounded-lg hover:bg-amber-700">
-                    關閉並繼續
-                </button>
-            </div>
-        </div>
-
-        <!-- 牌卡網格區 (9x9) --><div id="card-grid" class="grid w-full mx-auto" style="aspect-ratio: 1 / 1;">
-            <!-- 牌卡會由 JavaScript 生成 --></div>
-
+    <div class="fixed bottom-8 text-stone-500 text-sm tracking-widest uppercase font-sans">
+        Food Philosopher Theater • <span id="counter">START</span>
     </div>
 
     <script>
-        // --- 81 張牌卡資料集 (簡體版內容已轉為繁體中文) ---
-        const cardsData = [
-            { id: 1, food: "焦糖烤布蕾", quote: "[存在] 甜味不是布丁的本質，是打破外殼那一刻的驚喜。", category: "療癒甜點" },
-            { id: 2, food: "馬卡龍", quote: "[時間] 美麗的甜點，總需要時間來沉澱色彩與口感。", category: "療癒甜點" },
-            { id: 3, food: "黑森林蛋糕", quote: "[冒險] 嘗試一口複雜的層次，正如挑戰人生的不同面向。", category: "療癒甜點" },
-            { id: 4, food: "珍珠奶茶", quote: "[樂活] 搖晃，是為了讓甜與澀完美相遇的必要過程。", category: "療癒甜點" },
-            { id: 5, food: "可麗露", quote: "[平衡] 外殼的焦脆與內心的軟糯，是生命最好的比喻。", category: "療癒甜點" },
-            { id: 6, food: "抹茶千層", quote: "[溫暖] 層層堆疊，我們在最細微處尋求心靈的溫潤。", category: "療癒甜點" },
-            { id: 7, food: "法式薄餅", quote: "[深度] 簡單的麵皮，能捲入世界的萬千滋味。", category: "療癒甜點" },
-            { id: 8, food: "提拉米蘇", quote: "[自我] 帶我走。在苦澀與甜蜜中，尋找真正的自我。", category: "療癒甜點" },
-            { id: 9, food: "舒芙蕾", quote: "[傳承] 輕盈的生命，總在記憶的高處留下驚鴻一瞥。", category: "療癒甜點" },
-            { id: 10, food: "義大利麵", quote: "[存在] 麵條的曲折，是生命道路上必然的迴繞。", category: "飽足主食" },
-            { id: 11, food: "白飯", quote: "[時間] 在最單純的飽足中，回歸飢餓最初的叩問。", category: "飽足主食" },
-            { id: 12, food: "炒麵", quote: "[冒險] 鑊氣是瞬間的爆發，人生需要這種熱烈的轉折。", category: "飽足主食" },
-            { id: 13, food: "漢堡", quote: "[樂活] 雙手掌握的滿足，是短暫而紮實的幸福。", category: "飽足主食" },
-            { id: 14, food: "三明治", quote: "[平衡] 把所有不安穩的元素，用兩片麵包妥善包裹。", category: "飽足主食" },
-            { id: 15, food: "飯糰", quote: "[溫暖] 簡單的形狀，包裹著內心最堅定的力量。", category: "飽足主食" },
-            { id: 16, food: "披薩", quote: "[深度] 每一片都是一個小宇宙，有著不同的星系與風味。", category: "飽足主食" },
-            { id: 17, food: "麵包", quote: "[自我] 從麵粉到生命，每一次發酵都是靈魂的覺醒。", category: "飽足主食" },
-            { id: 18, food: "餃子", quote: "[傳承] 我們包住的，是餡料，還是對家的定義？", category: "飽足主食" },
-            { id: 19, food: "泰式咖哩", quote: "[存在] 椰奶的溫和與辣椒的熱烈，共存於一個瞬間。", category: "異國風味" },
-            { id: 20, food: "壽司", quote: "[時間] 每一貫都是對季節與片刻的敬意。", category: "異國風味" },
-            { id: 21, food: "墨西哥捲餅", quote: "[冒險] 旅途的滋味，總是被緊緊地包裹起來，等待發掘。", category: "異國風味" },
-            { id: 22, food: "韓式炸雞", quote: "[樂活] 酥脆的聲響，是生活最好的背景音樂。", category: "異國風味" },
-            { id: 23, food: "越南春捲", quote: "[平衡] 清爽的內涵，需要一個透明的外衣來保護。", category: "異國風味" },
-            { id: 24, food: "印度烤餅", quote: "[溫暖] 靠近熱源，感受最原始的溫柔與柔軟。", category: "異國風味" },
-            { id: 25, food: "土耳其烤肉", quote: "[深度] 旋轉的烤肉，訴說著時間堆疊的層次感。", category: "異國風味" },
-            { id: 26, food: "法式蝸牛", quote: "[自我] 突破自我的外殼，才能發現獨特的美味。", category: "異國風味" },
-            { id: 27, food: "日式拉麵", quote: "[傳承] 一碗熱湯，濃縮了職人世代的心血。", category: "異國風味" },
-            { id: 28, food: "烤香腸", quote: "[存在] 簡單的肉慾，是生命最直接的呼喊。", category: "街邊小吃" },
-            { id: 29, food: "雞蛋糕", quote: "[時間] 模具定型的，是形狀，還是童年那短暫的記憶？", category: "街邊小吃" },
-            { id: 30, food: "炸魷魚", quote: "[冒險] 讓海的氣息，在熱油中釋放狂野。", category: "街邊小吃" },
-            { id: 31, food: "滷肉飯", quote: "[樂活] 樸實的滿足，從不需要華麗的裝飾。", category: "街邊小吃" },
-            { id: 32, food: "臭豆腐", quote: "[平衡] 接受衝突的存在，才能品嚐到真正的和諧。", category: "街邊小吃" },
-            { id: 33, food: "章魚小丸子", quote: "[溫暖] 圓潤的外表下，藏著燙口的熱情。", category: "街邊小吃" },
-            { id: 34, food: "地瓜球", quote: "[深度] 越是空心，越能裝載更多的樂趣與想像。", category: "街邊小吃" },
-            { id: 35, food: "烤玉米", quote: "[自我] 每一顆獨立的顆粒，組成了完整的自我價值。", category: "街邊小吃" },
-            { id: 36, food: "蚵仔煎", quote: "[傳承] 混合的滋味，是土地與海洋的古老誓約。", category: "街邊小吃" },
-            { id: 37, food: "豆腐", quote: "[存在] 最柔軟的姿態，蘊含著最堅實的蛋白質。", category: "清爽蔬食" },
-            { id: 38, food: "溫沙拉", quote: "[時間] 讓時間溫柔地釋放蔬果最深層的香氣。", category: "清爽蔬食" },
-            { id: 39, food: "櫛瓜麵", quote: "[冒險] 拋開既定的形狀，世界呈現出新的可能。", category: "清爽蔬食" },
-            { id: 40, food: "新鮮水果盤", quote: "[樂活] 讓色彩與清甜，成為心靈最天然的解藥。", category: "清爽蔬食" },
-            { id: 41, food: "酪梨吐司", quote: "[平衡] 油脂與清爽的完美對話，無關負擔。", category: "清爽蔬食" },
-            { id: 42, food: "義式蔬菜湯", quote: "[溫暖] 所有的美好，都源於土壤的慷慨給予。", category: "清爽蔬食" },
-            { id: 43, food: "鷹嘴豆泥", quote: "[深度] 泥土的芬芳，才是最值得深思的味道。", category: "清爽蔬食" },
-            { id: 44, food: "糙米飯", quote: "[自我] 回歸最原始的風味，聆聽身體的聲音。", category: "清爽蔬食" },
-            { id: 45, food: "蘑菇", quote: "[傳承] 來自黑暗的饋贈，將歷史的風味帶到餐桌。", category: "清爽蔬食" },
-            { id: 46, food: "羅宋湯", quote: "[存在] 所有的食材，在熱水中融為一體，共生共存。", category: "暖心湯品" },
-            { id: 47, food: "味噌湯", quote: "[時間] 一碗湯的深度，取決於發酵的耐心。", category: "暖心湯品" },
-            { id: 48, food: "酸辣湯", quote: "[冒險] 挑戰味蕾的極限，感受酸與辣的交鋒。", category: "暖心湯品" },
-            { id: 49, food: "蛤蜊湯", quote: "[樂活] 海味的鮮甜，是生活給予最直接的獎勵。", category: "暖心湯品" },
-            { id: 50, food: "佛跳牆", quote: "[平衡] 複雜的組合，在長時間的熬煮後達到圓融。", category: "暖心湯品" },
-            { id: 51, food: "雞湯", quote: "[溫暖] 暖的不只是身體，還有記憶中的某個片刻。", category: "暖心湯品" },
-            { id: 52, food: "玉米濃湯", quote: "[深度] 濃郁的口感，包裹著童年無憂的純粹。", category: "暖心湯品" },
-            { id: 53, food: "海鮮巧達湯", quote: "[自我] 你的心靈深處，是否也藏著一片海洋？", category: "暖心湯品" },
-            { id: 54, food: "藥燉排骨", quote: "[傳承] 用古老的智慧，為現代的疲憊滋補。", category: "暖心湯品" },
-            { id: 55, food: "龍蝦", quote: "[存在] 在堅硬的外殼下，藏著極致的柔軟與奢華。", category: "海鮮盛宴" },
-            { id: 56, food: "生魚片", quote: "[時間] 用最鋒利的刀，切斷時間，凝結當下的鮮甜。", category: "海鮮盛宴" },
-            { id: 57, food: "辣炒花枝", quote: "[冒險] 讓每一次咀嚼，都成為一次海上的追逐。", category: "海鮮盛宴" },
-            { id: 58, food: "烤干貝", quote: "[樂活] 簡單的炙烤，釋放出生活最純粹的光芒。", category: "海鮮盛宴" },
-            { id: 59, food: "魚排", quote: "[平衡] 來自海洋的力量，需要溫和的方式來呈現。", category: "海鮮盛宴" },
-            { id: 60, food: "蝦子", quote: "[溫暖] 彎曲的姿態，是向生命中所有溫柔的致敬。", category: "海鮮盛宴" },
-            { id: 61, food: "螃蟹", quote: "[深度] 為了內在的寶藏，我們必須學習如何剝開煩惱。", category: "海鮮盛宴" },
-            { id: 62, food: "牡蠣", quote: "[自我] 選擇生食或熟食，是對生命野性或克制的考驗。", category: "海鮮盛宴" },
-            { id: 63, food: "清蒸魚", quote: "[傳承] 最樸實的烹調方式，承載著對食材最高的尊重。", category: "海鮮盛宴" },
-            { id: 64, food: "黑咖啡", quote: "[存在] 苦澀的底蘊，才是支撐清醒思維的本質。", category: "飲品微醺" },
-            { id: 65, food: "紅酒", quote: "[時間] 每一年的風土，都在瓶中等待被解讀的時刻。", category: "飲品微醺" },
-            { id: 66, food: "烈酒", quote: "[冒險] 喝下的不僅是液體，更是直面靈魂深處的衝動。", category: "飲品微醺" },
-            { id: 67, food: "氣泡水", quote: "[樂活] 氣泡的跳動，是生活裡不經意的小確幸。", category: "飲品微醺" },
-            { id: 68, food: "冰沙", quote: "[平衡] 讓所有營養，在冰鎮中達成共識。", category: "飲品微醺" },
-            { id: 69, food: "熱可可", quote: "[溫暖] 像被一個溫柔的擁抱，從舌尖暖到心頭。", category: "飲品微醺" },
-            { id: 70, food: "雞尾酒", quote: "[深度] 複雜的混合，創造出超越單一元素的哲學。", category: "飲品微醺" },
-            { id: 71, food: "威士忌", quote: "[自我] 微醺之際，誰在看世界？誰又在看自己？", category: "飲品微醺" },
-            { id: 72, food: "茶", quote: "[傳承] 一杯清茶，沉澱了數千年東方的智慧。", category: "飲品微醺" },
-            { id: 73, food: "宮保雞丁", quote: "[存在] 辣與麻，讓我們意識到生命強烈的感受。", category: "中式傳統" },
-            { id: 74, food: "豆漿", quote: "[時間] 緩慢研磨，才能得到最濃郁的滋養。", category: "中式傳統" },
-            { id: 75, food: "麻辣火鍋", quote: "[冒險] 沸騰的慾望，總是呼喚我們一起沉淪。", category: "中式傳統" },
-            { id: 76, food: "蔥油餅", quote: "[樂活] 簡單的麵香與油香，是人間煙火的具體證明。", category: "中式傳統" },
-            { id: 77, food: "粥", quote: "[平衡] 在生病與康復之間，給予身體最溫柔的調和。", category: "中式傳統" },
-            { id: 78, food: "年糕", quote: "[溫暖] 黏住了親情，也黏住了對美好生活的期盼。", category: "中式傳統" },
-            { id: 79, food: "豆腐腦", quote: "[深度] 甜與鹹的選擇，決定了你對人生的基本態度。", category: "中式傳統" },
-            { id: 80, food: "包子", quote: "[自我] 內餡的豐滿與外皮的謙卑，構成了完整的自我。", category: "中式傳統" },
-            { id: 81, food: "月餅", quote: "[傳承] 圓滿的形狀，寄託著跨越世代的思念。", category: "中式傳統" }
+        const rawCardsData = [
+            // 標題頁資料 (特殊標記)
+            { isTitle: true, title: "吃貨哲學家", subtitle: "114年 來去踅基隆", icon: "🍱" },
+            { name: "苦瓜", philosopher: "陳宥凱", quote: "吃苦，是為了看清世界的原味。", icon: "🥒" },
+            { name: "牛肉麵", philosopher: "徐暐婷", quote: "以韌性撐起靈魂，用火候溫潤人生。", icon: "🍜" },
+            { name: "粉圓冰", philosopher: "江文慧", quote: "要像粉圓圓潤翻滾，別刁難自己。", icon: "🍧" },
+            { name: "麵條", philosopher: "林昱伶", quote: "即便被生活用力拉扯，也要保有回彈的韌性。", icon: "🥢" },
+            { name: "餛飩", philosopher: "張同", quote: "簡單生活也是充實的方法。", icon: "🥟" },
+            { name: "豬排定食", philosopher: "彭稟宸", quote: "表皮脆硬，內在鮮美，像極了父親的愛。", icon: "🍱" },
+            { name: "餛飩湯", philosopher: "詹宜修", quote: "薄皮裹著滿盈的善意，一口咬下，心裡的寒意都散了。", icon: "🥣" },
+            { name: "蛋餃", philosopher: "唐暐筑", quote: "平凡的你，也有著溫暖的內心。", icon: "🍳" },
+            { name: "炸雞腿", philosopher: "廖柏丞", quote: "外酥內嫩，是熬過高溫後的溫柔。", icon: "🍗" },
+            { name: "辣子雞蓋飯", philosopher: "謝慧真", quote: "辛辣被米飯吸收，情緒也如此處理。", icon: "🍚" },
+            { name: "千層蛋糕", philosopher: "鄭至宏", quote: "人生就像千層蛋糕層層堆疊的豐富性。", icon: "🍰" },
+            { name: "御飯糰", philosopher: "邱裕展", quote: "趁海苔未軟、壯志尚盈，溫柔地向目標前行。", icon: "🍙" },
+            { name: "柿餅", philosopher: "許栢睿", quote: "別急著否定現在的苦澀，那是未來回甘的伏筆。", icon: "🍊" },
+            { name: "烤馬鈴薯", philosopher: "陳柏睿", quote: "人生像烤馬鈴薯，鬆軟不是退讓，是承住壓力。", icon: "🥔" },
+            { name: "咖哩飯", philosopher: "黃于倫", quote: "休息不是停滯，而是為了讓生命更入味。", icon: "🍛" },
+            { name: "御飯糰", philosopher: "吳定謙", quote: "別讓人生，成了受潮軟化的海苔。", icon: "🍙" },
+            { name: "霜淇淋", philosopher: "賴柏豪", quote: "猶豫，是會讓幸福融化的。", icon: "🍦" },
+            { name: "滷肉飯", philosopher: "謝沛呈", quote: "踏實走好每一天，耐心自然會把平凡熬成深刻。", icon: "🍛" },
+            { name: "沙拉", philosopher: "張沛穎", quote: "過程不論好壞，都是成就你獨特的風味佐料。", icon: "🥗" },
+            { name: "湯包", philosopher: "林純儀", quote: "人生如湯包，最精華的時刻總在燙口的瞬間。", icon: "🥟" },
+            { name: "蔥油餅", philosopher: "倪詩晴", quote: "生活不必預熱，趁著酥脆，即刻入魂。", icon: "🥞" },
+            { name: "炸雞腿", philosopher: "陳思蘋", quote: "快樂要趁早，遲來的滿足總是會打折。", icon: "🍗" },
+            { name: "五花豬", philosopher: "簡恩琳", quote: "時間不用太趕也可以很剛好，只需要自己拿捏好。", icon: "🥓" },
+            { name: "麻糬燒", philosopher: "藍立淇", quote: "總是鹹甜交織，圓滿又幸福。", icon: "🍡" },
+            { name: "炸雞", philosopher: "何若婷", quote: "換上這層酥脆的武裝，是為了溫柔守護裡頭最軟弱的自己。", icon: "🍗" },
+            { name: "半筋半肉牛肉麵", philosopher: "周健良", quote: "有點倔強、有點溫柔，才是人生最完美的嚼勁。", icon: "🍜" },
+            { name: "紅燒牛肉麵", philosopher: "蔡定穎", quote: "終會成香。", icon: "🍜" },
+            { name: "清燉牛肉麵", philosopher: "鄭少甯", quote: "清淡不炫，久熬方見真味深長。", icon: "🍜" },
+            { name: "咖啡", philosopher: "吳冠緯", quote: "人生如咖啡，苦澀後才有最香的回甘。", icon: "☕" },
+            { name: "陽春麵", philosopher: "季定睿", quote: "慢慢走在平淡，溫緩便會發光。", icon: "🍜" }
         ];
 
-        const cardGrid = document.getElementById('card-grid');
-        const randomDrawBtn = document.getElementById('random-draw-btn');
-        const resetBtn = document.getElementById('reset-btn');
-        const resultMessage = document.getElementById('result-message');
-        const resultContent = document.getElementById('result-content');
-        const resultTitle = document.getElementById('result-title');
-        
-        // 用來追蹤已翻開的卡片狀態
-        let flippedCards = {};
+        let currentIndex = 0;
+        const displayTime = 5000; 
 
-        // 輔助函數：根據食物名稱生成一個假圖片URL
-        function generateFoodImageUrl(foodName, id) {
-            // 替換為實際的圖片庫或生成服務
-            // 這裡使用 Placehold.co 和一些關鍵字來模擬
-            const keywords = foodName.replace(/\s/g, '+');
-            const seed = (id * 123 + foodName.length) % 1000; // 確保每次刷新圖片不同
-            return `https://picsum.photos/seed/${seed}/150/150?blur=1`; // 使用 Lorem Picsum 模擬圖片
-        }
+        function updateSlide() {
+            const container = document.getElementById('theater-content');
+            const counter = document.getElementById('counter');
+            const progressBar = document.getElementById('progress');
+            const data = rawCardsData[currentIndex];
 
-        // 隨機獲取一個卡片
-        function getRandomCard() {
-            const randomIndex = Math.floor(Math.random() * cardsData.length);
-            return cardsData[randomIndex];
-        }
-
-        // 翻轉指定的卡片
-        function flipCard(cardElement, cardData) {
-            const cardInner = cardElement.querySelector('.card');
-            if (!cardInner.classList.contains('flipped')) {
-                cardInner.classList.add('flipped');
-                flippedCards[cardData.id] = true;
-                
-                // 為了讓使用者在模式一也能清楚看到結果，在翻轉後，將結果顯示在彈窗
-                resultTitle.textContent = `心靈小語 (卡片 #${cardData.id})`;
-                resultContent.innerHTML = `
-                    <p class="text-xl font-bold text-gray-800 mb-2">您選擇的美食是：${cardData.food}</p>
-                    <div class="flex justify-center mb-4">
-                        <img src="${generateFoodImageUrl(cardData.food, cardData.id)}" alt="${cardData.food}" class="w-32 h-32 object-cover rounded-md shadow-sm">
-                    </div>
-                    <p class="text-2xl font-serif italic text-amber-700 p-4 bg-amber-50 rounded-lg border-2 border-amber-200">
-                        「${cardData.quote}」
-                    </p>
-                `;
-                resultMessage.classList.remove('hidden');
-            }
-        }
-
-        // 關閉結果彈窗
-        function closeModal() {
-            resultMessage.classList.add('hidden');
-        }
-        window.closeModal = closeModal; // 暴露給 HTML 內聯事件
-
-        // --- 核心功能：生成牌卡網格 ---
-        function createCardGrid() {
-            cardGrid.innerHTML = ''; // 清空舊內容
-            cardsData.forEach(card => {
-                const container = document.createElement('div');
-                container.className = 'card-container aspect-square'; // 使用 aspect-square 確保卡片是正方形
-
-                const cardInner = document.createElement('div');
-                cardInner.className = 'card';
-                cardInner.onclick = () => flipCard(container, card); // 綁定點擊事件 (模式一)
-
-                // 正面：美食 (圖片 + 小字名稱)
-                const front = document.createElement('div');
-                front.className = 'card-face card-front';
-                front.innerHTML = `
-                    <img src="${generateFoodImageUrl(card.food, card.id)}" alt="${card.food}" loading="lazy">
-                    <div class="food-name">${card.food}</div>
-                `;
-
-                // 背面：心靈小語
-                const back = document.createElement('div');
-                back.className = 'card-face card-back';
-                back.innerHTML = `
-                    <div class="quote-text">「${card.quote}」</div>
-                `;
-
-                cardInner.appendChild(front);
-                cardInner.appendChild(back);
-                container.appendChild(cardInner);
-                cardGrid.appendChild(container);
-            });
-        }
-
-        // --- 模式二：隨機抽卡邏輯 ---
-        randomDrawBtn.addEventListener('click', () => {
-            const randomCard = getRandomCard();
-
-            // 1. 找到對應的卡片元素並翻轉
-            const cardElement = cardGrid.children[randomCard.id - 1];
-            if (cardElement) {
-                 // 確保所有卡片都先復原，避免視覺混亂
-                resetAllCards(false); 
-                // 延遲翻轉，強調是系統選擇
-                setTimeout(() => {
-                    const cardInner = cardElement.querySelector('.card');
-                    cardInner.classList.add('flipped');
-                    flippedCards[randomCard.id] = true;
-
-                    // 2. 顯示結果彈窗 (強調「決定吃什麼」)
-                    resultTitle.textContent = `🎯 模式二：隨機抽卡結果`;
-                    resultContent.innerHTML = `
-                        <p class="text-2xl font-extrabold text-red-600 animate-pulse mb-3">
-                            系統決定！您今天的美食是：
+            // 重置進度條
+            progressBar.style.transition = 'none';
+            progressBar.style.width = '0%';
+            
+            if (data.isTitle) {
+                // 渲染開場標題頁
+                container.innerHTML = `
+                    <div class="fade-in-out title-screen">
+                        <span class="food-icon">${data.icon}</span>
+                        <h1 class="text-6xl md:text-8xl font-bold mb-6">${data.title}</h1>
+                        <div class="h-1 w-24 bg-amber-700 mx-auto mb-6"></div>
+                        <p class="text-2xl md:text-3xl text-stone-400 tracking-[0.5em] font-light">
+                            ${data.subtitle}
                         </p>
-                        <p class="text-4xl font-black text-amber-800 mb-6">${randomCard.food}</p>
-                        <div class="flex justify-center mb-4">
-                            <img src="${generateFoodImageUrl(randomCard.food, randomCard.id)}" alt="${randomCard.food}" class="w-32 h-32 object-cover rounded-md shadow-sm">
-                        </div>
-                        <div class="border-t pt-4">
-                            <p class="text-xl font-bold text-gray-700 mb-2">今日心靈啟發：</p>
-                            <p class="text-2xl font-serif italic text-amber-700 p-4 bg-amber-50 rounded-lg border-2 border-amber-200">
-                                「${randomCard.quote}」
-                            </p>
-                        </div>
-                    `;
-                    resultMessage.classList.remove('hidden');
-
-                }, 500);
-            }
-        });
-
-        // --- 重置功能 ---
-        function resetAllCards(showModal = true) {
-            document.querySelectorAll('.card').forEach(card => {
-                card.classList.remove('flipped');
-            });
-            flippedCards = {};
-            closeModal();
-            if (showModal) {
-                // 顯示重置成功訊息
-                resultTitle.textContent = `牌卡已重置`;
-                resultContent.innerHTML = `
-                    <p class="text-xl text-gray-700">所有的美食牌卡已歸位，等待您下一次的選擇。</p>
+                    </div>
                 `;
-                resultMessage.classList.remove('hidden');
+                counter.textContent = "INTRO";
+            } else {
+                // 渲染哲學家名言頁
+                container.innerHTML = `
+                    <div class="fade-in-out">
+                        <span class="food-icon">${data.icon}</span>
+                        <h2 class="text-2xl text-amber-500 font-sans tracking-widest mb-4">— ${data.name} —</h2>
+                        <div class="quote-mark">“</div>
+                        <p class="text-3xl md:text-4xl font-bold leading-relaxed mb-8 px-4">
+                            ${data.quote}
+                        </p>
+                        <div class="inline-block border-t border-stone-700 pt-4 px-8">
+                            <span class="text-xl text-stone-400">吃貨哲學家｜${data.philosopher}</span>
+                        </div>
+                    </div>
+                `;
+                // 計算扣除標題頁後的編號
+                counter.textContent = `${currentIndex} / ${rawCardsData.length - 1}`;
             }
-        }
-        
-        resetBtn.addEventListener('click', () => resetAllCards(true));
 
-        // --- 初始化遊戲 ---
-        window.onload = createCardGrid;
+            // 開始進度條動畫
+            setTimeout(() => {
+                progressBar.style.transition = `width ${displayTime}ms linear`;
+                progressBar.style.width = '100%';
+            }, 50);
+
+            // 準備下一位
+            currentIndex = (currentIndex + 1) % rawCardsData.length;
+        }
+
+        // 初始化播放
+        updateSlide();
+        setInterval(updateSlide, displayTime);
     </script>
 </body>
 </html>
