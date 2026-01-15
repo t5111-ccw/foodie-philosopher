@@ -3,10 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>吃貨哲學劇場 - 自動放映中</title>
+    <title>吃貨哲學劇場 - 跨裝置等比例展示版</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700&family=Noto+Sans+TC:wght@300;400&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700;900&family=Noto+Sans+TC:wght@300;400&display=swap');
+
+        :root {
+            /* 定義基礎比例單位，確保在不同螢幕下等比例縮放 */
+            --base-unit: 1vw;
+        }
 
         body {
             font-family: 'Noto Serif TC', serif;
@@ -17,77 +22,130 @@
             align-items: center;
             justify-content: center;
             height: 100vh;
+            margin: 0;
         }
 
         .slide-container {
-            width: 100%;
-            max-width: 900px;
+            width: 90vw;
+            max-width: 1400px;
             text-align: center;
-            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
         }
 
         .fade-in-out {
             animation: fadeInOut 5s infinite;
+            opacity: 0;
+            width: 100%;
         }
 
         @keyframes fadeInOut {
-            0% { opacity: 0; transform: translateY(20px); }
+            0% { opacity: 0; transform: translateY(2vh); }
             15% { opacity: 1; transform: translateY(0); }
             85% { opacity: 1; transform: translateY(0); }
-            100% { opacity: 0; transform: translateY(-20px); }
+            100% { opacity: 0; transform: translateY(-2vh); }
         }
 
+        /* 使用 vw 確保圖標隨螢幕縮放 */
         .food-icon {
-            font-size: 8rem;
-            margin-bottom: 2rem;
+            font-size: calc(var(--base-unit) * 12); 
+            margin-bottom: 2vh;
             display: block;
-            filter: drop-shadow(0 0 20px rgba(255,255,255,0.2));
+            filter: drop-shadow(0 0 30px rgba(255,255,255,0.15));
         }
 
         .progress-bar {
             position: fixed;
             bottom: 0;
             left: 0;
-            height: 4px;
+            height: 0.8vh;
             background: #b45309;
-            transition: width 5s linear;
+            width: 0%;
+            z-index: 50;
         }
 
         .quote-mark {
             font-family: 'Georgia', serif;
-            color: #4b5563;
-            font-size: 4rem;
+            color: #374151;
+            font-size: calc(var(--base-unit) * 6);
             line-height: 1;
+            margin-bottom: -1vh;
         }
 
+        /* 標題畫面：使用 vw 單位 */
         .title-screen h1 {
+            font-size: calc(var(--base-unit) * 8);
             letter-spacing: 0.2em;
-            background: linear-gradient(to right, #fcd34d, #b45309);
+            font-weight: 900;
+            background: linear-gradient(to right, #fcd34d, #b45309, #fcd34d);
+            background-size: 200% auto;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            animation: shine 5s linear infinite;
+            line-height: 1.2;
         }
 
+        @keyframes shine {
+            to { background-position: 200% center; }
+        }
+
+        /* 語錄主要文字：使用 vw 防止重疊 */
+        .main-quote {
+            font-size: calc(var(--base-unit) * 4.5);
+            font-weight: 900;
+            line-height: 1.4;
+            text-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            word-break: keep-all; /* 防止中文字被強行斷行 */
+            margin: 2vh 0;
+        }
+
+        .philosopher-info {
+            font-size: calc(var(--base-unit) * 1.8);
+            color: #9ca3af;
+            letter-spacing: 0.1em;
+            border-top: 2px solid #374151;
+            padding-top: 2vh;
+            margin-top: 2vh;
+            display: inline-block;
+        }
+
+        /* 謝幕名單：使用 grid 自適應 */
         .credits-list {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
-            gap: 0.5rem;
-            font-size: 0.9rem;
+            grid-template-columns: repeat(auto-fill, minmax(10vw, 1fr));
+            gap: 1.5vh;
+            font-size: calc(var(--base-unit) * 1.2);
             color: #9ca3af;
-            margin-top: 1.5rem;
+            margin-top: 3vh;
             font-family: 'Noto Sans TC', sans-serif;
+            width: 100%;
+        }
+
+        /* 底部裝飾字 */
+        .footer-text {
+            position: fixed;
+            bottom: 6vh;
+            width: 100%;
+            text-align: center;
+            font-size: calc(var(--base-unit) * 1);
+            color: #4b5563;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
         }
     </style>
 </head>
 <body>
 
     <div class="slide-container" id="theater-content">
-        <!-- 內容將由 JS 自動輪播 -->
+        <div class="text-stone-600 text-2xl">劇場初始化中...</div>
     </div>
 
     <div class="progress-bar" id="progress"></div>
 
-    <div class="fixed bottom-8 text-stone-500 text-sm tracking-widest uppercase font-sans">
-        生活是一場饗宴，而我們是優雅的吃客 • <span id="counter">START</span>
+    <div class="footer-text">
+        生活是一場饗宴，而我們是優雅的吃客 • <span id="counter" class="text-amber-700 font-bold">START</span>
     </div>
 
     <script>
@@ -129,16 +187,12 @@
             { name: "大腸包小腸", philosopher: "吳育賢", quote: "滋味有點綜合，生活反而更自由。", icon: "🥖" },
             { name: "拉麵", philosopher: "黃伈伶", quote: "受過幾次拉扯，才活出那份嚼勁。", icon: "🍜" },
             { name: "麻辣火鍋", philosopher: "翁思涵", quote: "牙一咬，都會過去的。", icon: "🍲" },
-            { name: "雞排", philosopher: "朱智遠", quote: "享受要趁熱。", icon: "🍗" },  
+            { name: "雞排", philosopher: "朱智遠", quote: "享受要趁熱。", icon: "🍗" },
             { name: "三寶牛肉麵", philosopher: "劉亦亘", quote: "在時間裡沉澱，生活會回饋厚度。", icon: "🍜" },
-            { isEnd: true } // 謝幕頁標記
+            { isEnd: true }
         ];
 
-        // 提取所有學生姓名
-        const studentNames = rawCardsData
-            .filter(d => d.philosopher)
-            .map(d => d.philosopher);
-
+        const studentNames = rawCardsData.filter(d => d.philosopher).map(d => d.philosopher).sort();
         let currentIndex = 0;
         const displayTime = 5000; 
 
@@ -148,30 +202,33 @@
             const progressBar = document.getElementById('progress');
             const data = rawCardsData[currentIndex];
 
+            container.innerHTML = '';
             progressBar.style.transition = 'none';
             progressBar.style.width = '0%';
+            void progressBar.offsetWidth;
+
+            let contentHtml = '';
             
             if (data.isTitle) {
-                container.innerHTML = `
+                contentHtml = `
                     <div class="fade-in-out title-screen">
-                        <span class="food-icon">🍱</span>
-                        <h1 class="text-6xl md:text-8xl font-bold mb-6">${data.title}</h1>
-                        <div class="h-1 w-24 bg-amber-700 mx-auto mb-6"></div>
-                        <p class="text-2xl md:text-3xl text-stone-400 tracking-[0.5em] font-light">${data.subtitle}</p>
+                        <span class="food-icon">${data.icon}</span>
+                        <h1>${data.title}</h1>
+                        <div class="h-1 w-32 bg-amber-700 mx-auto mb-6 rounded-full"></div>
+                        <p class="text-3xl text-stone-400 tracking-[0.5em] font-light">${data.subtitle}</p>
                     </div>
                 `;
                 counter.textContent = "INTRO";
             } else if (data.isEnd) {
-                container.innerHTML = `
+                contentHtml = `
                     <div class="fade-in-out">
-                        <h2 class="text-3xl font-bold text-amber-600 mb-4">營業中</h2>
-                        <div class="text-lg text-stone-300 mb-6">
-                            <p class="mb-2">© 2026 [國立基隆商工 / 來去踅基隆] 版權所有</p>
-                           
-                            <p class="text-stone-500 mt-2">指導教師：陳美蘭、吳仲騏</p>
+                        <h2 class="text-4xl font-bold text-amber-600 mb-6">正在營業中</h2>
+                        <div class="text-lg text-stone-400 mb-4">
+                            <p>© 2026 [國立基隆商工 / 來去踅基隆] 版權所有</p>
+                            <p>指導教師：陳美蘭、吳仲騏</p>
                         </div>
                         <div class="h-px w-full bg-stone-800 my-4"></div>
-                        <p class="text-sm tracking-widest text-amber-500 uppercase mb-4">吃貨哲學家 / 修課學生</p>
+                        <p class="text-sm tracking-[0.3em] text-amber-500 uppercase mb-4">吃貨哲學家 / 全體修課學生</p>
                         <div class="credits-list">
                             ${studentNames.map(name => `<span>${name}</span>`).join('')}
                         </div>
@@ -179,19 +236,21 @@
                 `;
                 counter.textContent = "END";
             } else {
-                container.innerHTML = `
+                contentHtml = `
                     <div class="fade-in-out">
                         <span class="food-icon">${data.icon}</span>
-                        <h2 class="text-2xl text-amber-500 font-sans tracking-widest mb-4">— ${data.name} —</h2>
+                        <h2 class="text-2xl text-amber-600 font-sans tracking-[0.4em] mb-4 font-light">— ${data.name} —</h2>
                         <div class="quote-mark">“</div>
-                        <p class="text-3xl md:text-4xl font-bold leading-relaxed mb-8 px-4">${data.quote}</p>
-                        <div class="inline-block border-t border-stone-700 pt-4 px-8">
-                            <span class="text-xl text-stone-400">吃貨哲學家｜${data.philosopher}</span>
+                        <p class="main-quote">${data.quote}</p>
+                        <div class="philosopher-info">
+                            吃貨哲學家｜${data.philosopher}
                         </div>
                     </div>
                 `;
                 counter.textContent = `${currentIndex} / ${rawCardsData.length - 2}`;
             }
+
+            container.innerHTML = contentHtml;
 
             setTimeout(() => {
                 progressBar.style.transition = `width ${displayTime}ms linear`;
@@ -201,10 +260,10 @@
             currentIndex = (currentIndex + 1) % rawCardsData.length;
         }
 
-        updateSlide();
-        setInterval(updateSlide, displayTime);
+        window.onload = () => {
+            updateSlide();
+            setInterval(updateSlide, displayTime);
+        };
     </script>
 </body>
 </html>
-
-
