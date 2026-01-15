@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>吃貨哲學劇場 - 大螢幕等比例優化版</title>
+    <title>吃貨哲學劇場 - 全置中優化版</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700;900&family=Noto+Sans+TC:wght@300;400&display=swap');
@@ -18,7 +18,7 @@
             color: #e5e7eb;
             overflow: hidden;
             display: flex;
-            align-items: center;
+            align-items: flex-start; 
             justify-content: center;
             height: 100vh;
             margin: 0;
@@ -31,6 +31,8 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            margin-top: 8vh; /* 稍微再往上提一點 */
+            height: 75vh;
             justify-content: center;
         }
 
@@ -38,6 +40,9 @@
             animation: fadeInOut 5s infinite;
             opacity: 0;
             width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center; /* 內部元件強製水平置中 */
         }
 
         @keyframes fadeInOut {
@@ -48,8 +53,8 @@
         }
 
         .food-icon {
-            font-size: calc(var(--base-unit) * 12); 
-            margin-bottom: 2vh;
+            font-size: calc(var(--base-unit) * 11); 
+            margin-bottom: 1vh;
             display: block;
             filter: drop-shadow(0 0 30px rgba(255,255,255,0.15));
         }
@@ -67,9 +72,8 @@
         .quote-mark {
             font-family: 'Georgia', serif;
             color: #374151;
-            font-size: calc(var(--base-unit) * 6);
+            font-size: calc(var(--base-unit) * 5);
             line-height: 1;
-            margin-bottom: -1vh;
         }
 
         /* 標題畫面 */
@@ -83,64 +87,72 @@
             -webkit-text-fill-color: transparent;
             animation: shine 5s linear infinite;
             line-height: 1.2;
+            margin-bottom: 2vh;
         }
 
         @keyframes shine {
             to { background-position: 200% center; }
         }
 
-        /* 語錄主要文字 */
+        /* 語錄主要文字 - 關鍵修正：text-align: center */
         .main-quote {
-            font-size: calc(var(--base-unit) * 4.5);
+            font-size: calc(var(--base-unit) * 4.2); 
             font-weight: 900;
-            line-height: 1.4;
+            line-height: 1.5; 
             text-shadow: 0 4px 10px rgba(0,0,0,0.3);
             word-break: keep-all;
-            margin: 2vh 0;
+            margin: 1.5vh 0;
+            max-width: 85vw;
+            text-align: center; /* 強制文字內容置中 */
         }
 
-        /* 美食名稱：調整為比人名稍大 */
+        /* 美食名稱 */
         .food-name {
             font-size: calc(var(--base-unit) * 2.8);
-            color: #d97706; /* 稍微亮一點的琥珀色 */
+            color: #d97706;
             font-family: 'Noto Sans TC', sans-serif;
             letter-spacing: 0.4em;
-            margin-bottom: 2vh;
+            margin-bottom: 1.5vh;
             font-weight: 400;
+            text-align: center;
         }
 
         .philosopher-info {
-            font-size: calc(var(--base-unit) * 2); /* 人名字體 */
+            font-size: calc(var(--base-unit) * 2);
             color: #9ca3af;
             letter-spacing: 0.1em;
             border-top: 2px solid #374151;
             padding-top: 2vh;
-            margin-top: 2vh;
+            margin-top: 1vh;
             display: inline-block;
+            text-align: center;
         }
 
         .credits-list {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(10vw, 1fr));
-            gap: 1.5vh;
-            font-size: calc(var(--base-unit) * 1.2);
+            gap: 1.2vh;
+            font-size: calc(var(--base-unit) * 1.1);
             color: #9ca3af;
-            margin-top: 3vh;
+            margin-top: 2vh;
             font-family: 'Noto Sans TC', sans-serif;
             width: 100%;
+            text-align: center;
         }
 
-        /* 底部裝飾字：顏色改為與編號一致 */
+        /* 底部裝飾字 */
         .footer-text {
             position: fixed;
-            bottom: 6vh;
+            bottom: 4vh;
             width: 100%;
             text-align: center;
             font-size: calc(var(--base-unit) * 1.2);
-            color: #b45309; /* 與編號一致的 Amber-700 */
+            color: #b45309; 
             letter-spacing: 0.3em;
             text-transform: uppercase;
             font-weight: 500;
+            background: linear-gradient(transparent, #1a1a1a 40%);
+            padding-top: 2vh;
         }
     </style>
 </head>
@@ -175,7 +187,7 @@
             { name: "烤馬鈴薯", philosopher: "陳柏睿", quote: "人生像烤馬鈴薯，鬆軟不是退讓，是承住壓力。", icon: "🥔" },
             { name: "咖哩飯", philosopher: "黃于倫", quote: "休息不是停滯，而是為了讓生命更入味。", icon: "🍛" },
             { name: "御飯糰", philosopher: "吳定謙", quote: "別讓人生，成了受潮軟化的海苔。", icon: "🍙" },
-            { name: "霜淇淋", philosopher: "賴柏豪", quote: "猶豫，是會讓幸福融化的。", icon: "🍦" },
+            { name: "霜淇 لوبی", philosopher: "賴柏豪", quote: "猶豫，是會讓幸福融化的。", icon: "🍦" },
             { name: "滷肉飯", philosopher: "謝沛呈", quote: "踏實走好每一天，耐心自然會把平凡熬成深刻。", icon: "🍛" },
             { name: "沙拉", philosopher: "張沛穎", quote: "過程不論好壞，都是成就你獨特的風味佐料。", icon: "🥗" },
             { name: "湯包", philosopher: "林純儀", quote: "人生如湯包，最精華的時刻總在燙口的瞬間。", icon: "🥟" },
