@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>吃貨哲學劇場 - 全置中優化版</title>
+    <title>吃貨哲學劇場 - 謝幕強化版</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700;900&family=Noto+Sans+TC:wght@300;400&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700;900&family=Noto+Sans+TC:wght@300;400;700&display=swap');
 
         :root {
             --base-unit: 1vw;
@@ -31,7 +31,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            margin-top: 8vh; /* 稍微再往上提一點 */
+            margin-top: 8vh;
             height: 75vh;
             justify-content: center;
         }
@@ -42,7 +42,7 @@
             width: 100%;
             display: flex;
             flex-direction: column;
-            align-items: center; /* 內部元件強製水平置中 */
+            align-items: center;
         }
 
         @keyframes fadeInOut {
@@ -94,7 +94,6 @@
             to { background-position: 200% center; }
         }
 
-        /* 語錄主要文字 - 關鍵修正：text-align: center */
         .main-quote {
             font-size: calc(var(--base-unit) * 4.2); 
             font-weight: 900;
@@ -103,10 +102,9 @@
             word-break: keep-all;
             margin: 1.5vh 0;
             max-width: 85vw;
-            text-align: center; /* 強制文字內容置中 */
+            text-align: center;
         }
 
-        /* 美食名稱 */
         .food-name {
             font-size: calc(var(--base-unit) * 2.8);
             color: #d97706;
@@ -128,16 +126,41 @@
             text-align: center;
         }
 
+        /* 謝幕頁專用樣式優化 */
+        .credits-title {
+            font-size: calc(var(--base-unit) * 3.5);
+            font-weight: 700;
+            color: #fbbf24;
+            margin-bottom: 3vh;
+        }
+
+        .credits-info {
+            font-size: calc(var(--base-unit) * 1.8);
+            color: #d1d5db;
+            margin-bottom: 4vh;
+            line-height: 1.8;
+        }
+
         .credits-list {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(10vw, 1fr));
-            gap: 1.2vh;
-            font-size: calc(var(--base-unit) * 1.1);
-            color: #9ca3af;
-            margin-top: 2vh;
+            /* 調整為 5 列，讓每個人名空間變大 */
+            grid-template-columns: repeat(5, 1fr);
+            gap: 2vh;
+            font-size: calc(var(--base-unit) * 1.8); /* 放大名單字體 */
+            color: #e5e7eb; /* 加深亮度 */
             font-family: 'Noto Sans TC', sans-serif;
+            font-weight: 700;
             width: 100%;
-            text-align: center;
+            max-width: 1200px;
+            margin-top: 2vh;
+        }
+
+        .credits-subtitle {
+            font-size: calc(var(--base-unit) * 1.5);
+            letter-spacing: 0.5em;
+            color: #b45309;
+            margin-bottom: 2vh;
+            font-weight: 700;
         }
 
         /* 底部裝飾字 */
@@ -187,7 +210,7 @@
             { name: "烤馬鈴薯", philosopher: "陳柏睿", quote: "人生像烤馬鈴薯，鬆軟不是退讓，是承住壓力。", icon: "🥔" },
             { name: "咖哩飯", philosopher: "黃于倫", quote: "休息不是停滯，而是為了讓生命更入味。", icon: "🍛" },
             { name: "御飯糰", philosopher: "吳定謙", quote: "別讓人生，成了受潮軟化的海苔。", icon: "🍙" },
-            { name: "霜淇 لوبی", philosopher: "賴柏豪", quote: "猶豫，是會讓幸福融化的。", icon: "🍦" },
+            { name: "霜淇淋", philosopher: "賴柏豪", quote: "猶豫，是會讓幸福融化的。", icon: "🍦" },
             { name: "滷肉飯", philosopher: "謝沛呈", quote: "踏實走好每一天，耐心自然會把平凡熬成深刻。", icon: "🍛" },
             { name: "沙拉", philosopher: "張沛穎", quote: "過程不論好壞，都是成就你獨特的風味佐料。", icon: "🥗" },
             { name: "湯包", philosopher: "林純儀", quote: "人生如湯包，最精華的時刻總在燙口的瞬間。", icon: "🥟" },
@@ -242,13 +265,13 @@
             } else if (data.isEnd) {
                 contentHtml = `
                     <div class="fade-in-out">
-                        <h2 class="text-4xl font-bold text-amber-600 mb-6">正在營業中</h2>
-                        <div class="text-lg text-stone-400 mb-4">
+                        <h2 class="credits-title">正在營業中</h2>
+                        <div class="credits-info">
                             <p>© 2026 [國立基隆商工 / 來去踅基隆] 版權所有</p>
                             <p>指導教師：陳美蘭、吳仲騏</p>
                         </div>
-                        <div class="h-px w-full bg-stone-800 my-4"></div>
-                        <p class="text-sm tracking-[0.3em] text-amber-500 uppercase mb-4">吃貨哲學家 / 全體修課學生</p>
+                        <div class="h-px w-2/3 bg-stone-700 my-4"></div>
+                        <p class="credits-subtitle">吃貨哲學家 / 全體修課學生</p>
                         <div class="credits-list">
                             ${studentNames.map(name => `<span>${name}</span>`).join('')}
                         </div>
