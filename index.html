@@ -3,13 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>吃貨哲學劇場 - 跨裝置等比例展示版</title>
+    <title>吃貨哲學劇場 - 大螢幕等比例優化版</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700;900&family=Noto+Sans+TC:wght@300;400&display=swap');
 
         :root {
-            /* 定義基礎比例單位，確保在不同螢幕下等比例縮放 */
             --base-unit: 1vw;
         }
 
@@ -48,7 +47,6 @@
             100% { opacity: 0; transform: translateY(-2vh); }
         }
 
-        /* 使用 vw 確保圖標隨螢幕縮放 */
         .food-icon {
             font-size: calc(var(--base-unit) * 12); 
             margin-bottom: 2vh;
@@ -74,7 +72,7 @@
             margin-bottom: -1vh;
         }
 
-        /* 標題畫面：使用 vw 單位 */
+        /* 標題畫面 */
         .title-screen h1 {
             font-size: calc(var(--base-unit) * 8);
             letter-spacing: 0.2em;
@@ -91,18 +89,28 @@
             to { background-position: 200% center; }
         }
 
-        /* 語錄主要文字：使用 vw 防止重疊 */
+        /* 語錄主要文字 */
         .main-quote {
             font-size: calc(var(--base-unit) * 4.5);
             font-weight: 900;
             line-height: 1.4;
             text-shadow: 0 4px 10px rgba(0,0,0,0.3);
-            word-break: keep-all; /* 防止中文字被強行斷行 */
+            word-break: keep-all;
             margin: 2vh 0;
         }
 
+        /* 美食名稱：調整為比人名稍大 */
+        .food-name {
+            font-size: calc(var(--base-unit) * 2.8);
+            color: #d97706; /* 稍微亮一點的琥珀色 */
+            font-family: 'Noto Sans TC', sans-serif;
+            letter-spacing: 0.4em;
+            margin-bottom: 2vh;
+            font-weight: 400;
+        }
+
         .philosopher-info {
-            font-size: calc(var(--base-unit) * 1.8);
+            font-size: calc(var(--base-unit) * 2); /* 人名字體 */
             color: #9ca3af;
             letter-spacing: 0.1em;
             border-top: 2px solid #374151;
@@ -111,7 +119,6 @@
             display: inline-block;
         }
 
-        /* 謝幕名單：使用 grid 自適應 */
         .credits-list {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(10vw, 1fr));
@@ -123,16 +130,17 @@
             width: 100%;
         }
 
-        /* 底部裝飾字 */
+        /* 底部裝飾字：顏色改為與編號一致 */
         .footer-text {
             position: fixed;
             bottom: 6vh;
             width: 100%;
             text-align: center;
-            font-size: calc(var(--base-unit) * 1);
-            color: #4b5563;
+            font-size: calc(var(--base-unit) * 1.2);
+            color: #b45309; /* 與編號一致的 Amber-700 */
             letter-spacing: 0.3em;
             text-transform: uppercase;
+            font-weight: 500;
         }
     </style>
 </head>
@@ -145,7 +153,7 @@
     <div class="progress-bar" id="progress"></div>
 
     <div class="footer-text">
-        生活是一場饗宴，而我們是優雅的吃客 • <span id="counter" class="text-amber-700 font-bold">START</span>
+        生活是一場饗宴，而我們是優雅的吃客 • <span id="counter" class="font-bold">START</span>
     </div>
 
     <script>
@@ -239,7 +247,7 @@
                 contentHtml = `
                     <div class="fade-in-out">
                         <span class="food-icon">${data.icon}</span>
-                        <h2 class="text-2xl text-amber-600 font-sans tracking-[0.4em] mb-4 font-light">— ${data.name} —</h2>
+                        <h2 class="food-name">— ${data.name} —</h2>
                         <div class="quote-mark">“</div>
                         <p class="main-quote">${data.quote}</p>
                         <div class="philosopher-info">
